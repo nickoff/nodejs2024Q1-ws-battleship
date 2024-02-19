@@ -3,21 +3,29 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  plugins: ['@typescript-eslint', '@typescript-eslint/eslint-plugin', 'prettier'],
+  plugins: [
+    '@typescript-eslint',
+    '@typescript-eslint/eslint-plugin',
+    'prettier',
+    'promise',
+  ],
   extends: [
     'airbnb-base',
+    'airbnb-typescript/base',
+    'eslint:recommended',
     'standard-with-typescript',
+    'plugin:n/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
-    'airbnb-typescript/base',
-    'prettier'
+    'plugin:promise/recommended',
+    'prettier',
   ],
   overrides: [
     {
       env: {
         node: true,
       },
-      files: ['.eslintrc.{js,cjs}'],
+      files: ['.eslintrc.{js,cjs}', '*.js', '*.ts'],
       parserOptions: {
         sourceType: 'script',
       },
@@ -26,10 +34,19 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
+    project: './tsconfig.json'
   },
   rules: {
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
-    'no-console': 'off'
+    'no-console': 'off',
+    'indent': 'error',
+    'prettier/prettier': [
+      "error",
+      {
+        'singleQuote': true,
+        'parser': 'flow'
+      }
+    ]
   },
 };
