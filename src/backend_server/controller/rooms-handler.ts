@@ -20,7 +20,11 @@ export const addUserToRoomHandler = (
     return;
   rooms.addUserToRoom(roomId, user.name, user.index);
   updateRooms();
-  if (room.roomUsers.length === 2) createGame(room.roomUsers);
+  if (room.roomUsers.length === 2) {
+    createGame(room.roomUsers);
+    rooms.deleteRoom(roomId);
+    updateRooms();
+  }
 };
 export const updateRooms = (): void => {
   wsClients.forEach(value => {
