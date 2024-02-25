@@ -9,6 +9,7 @@ module.exports = {
     'prettier',
     'promise',
   ],
+  parser: "@typescript-eslint/parser",
   extends: [
     'airbnb-base',
     'airbnb-typescript/base',
@@ -41,11 +42,11 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-console': 'off',
     'indent': 'error',
+    'n/no-missing-import': 'off',
     'prettier/prettier': [
       "error",
       {
         'singleQuote': true,
-        'parser': 'flow'
       }
     ]
   },
