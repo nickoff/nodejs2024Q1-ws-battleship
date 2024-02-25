@@ -1,7 +1,7 @@
 import {Server, type WebSocket as WSWebSocket} from 'ws';
 import {type IncomingMessage} from 'http';
 import {wsClients} from '../store/ws-clients';
-import {regHandler} from '../controller';
+import {regHandler, createRoomsHandler, addUserToRoomHandler} from '../controller';
 import {type IncomingClientMessage} from '../shared/models';
 
 export const startWsServer = (): void => {
@@ -14,41 +14,49 @@ export const startWsServer = (): void => {
 };
 
 const onConnection = (ws: WSWebSocket, req: IncomingMessage): void => {
-  console.log(`Client with key ${req.headers['sec-websocket-key']} connected!`);
+  const wsKey = req.headers['sec-websocket-key'];
+  console.log(`Client with key ${wsKey} connected!`);
 
-  if (req.headers['sec-websocket-key'] != null) {
-    wsClients.set(req.headers['sec-websocket-key'], ws);
+  if (wsKey != null) {
+    wsClients.set(wsKey, ws);
   }
 
   ws.on('message', (message: Buffer) => {
     try {
+      if (wsKey == null) return;
       const incomingClientMessage: IncomingClientMessage = JSON.parse(message.toString('utf8'));
-      incomingClientMessageHandler(ws, incomingClientMessage);
+      incomingClientMessageHandler(ws, wsKey, incomingClientMessage);
     } catch (error) {
       console.log(error);
     }
   });
 
   ws.on('close', (): void => {
-    if (
-      req.headers['sec-websocket-key'] != null &&
-      wsClients.has(req.headers['sec-websocket-key'])
-    ) {
-      wsClients.delete(req.headers['sec-websocket-key']);
+    if (wsKey != null && wsClients.has(wsKey)) {
+      wsClients.delete(wsKey);
     }
-    console.log(`Client with key ${req.headers['sec-websocket-key']} disconnected!`);
+    console.log(`Client with key ${wsKey} disconnected!`);
   });
 };
 
 const incomingClientMessageHandler = (
   ws: WSWebSocket,
+  wsKey: string,
   incomingClientMessage: IncomingClientMessage,
 ): void => {
   console.log(incomingClientMessage);
 
   switch (incomingClientMessage.type) {
     case 'reg': {
-      regHandler(ws, incomingClientMessage);
+      regHandler(ws, incomingClientMessage, wsKey);
+      break;
+    }
+    case 'create_room': {
+      createRoomsHandler();
+      break;
+    }
+    case 'add_user_to_room': {
+      addUserToRoomHandler(wsKey, incomingClientMessage);
       break;
     }
     default: {

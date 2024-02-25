@@ -4,13 +4,17 @@ import {users} from '../store/users';
 import {updateRooms} from './rooms-handler';
 import {updateWinners} from './winners-handler';
 
-export const regHandler = (ws: WSWebSocket, incomingClientMessage: IncomingClientMessage): void => {
+export const regHandler = (
+  ws: WSWebSocket,
+  incomingClientMessage: IncomingClientMessage,
+  wsKey: string,
+): void => {
   const data = JSON.parse(incomingClientMessage.data);
   const userName = data.name as string;
   const userPassword = data.password as string;
 
   try {
-    const user = users.getUser(userName, userPassword);
+    const user = users.getUser(userName, userPassword, wsKey);
     ws.send(
       JSON.stringify({
         type: 'reg',

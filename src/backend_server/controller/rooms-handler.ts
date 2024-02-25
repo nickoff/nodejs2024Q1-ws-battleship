@@ -1,29 +1,34 @@
 import {type IncomingClientMessage} from 'backend_server/shared/models';
-import {type WebSocket as WSWebSocket} from 'ws';
 import {wsClients} from '../store/ws-clients';
 import {rooms} from '../store/rooms';
+import {users} from '../store/users';
 
-export const roomsHandler = (
-  ws: WSWebSocket,
-  incomingClientMessage: IncomingClientMessage,
-): void => {
-  console.log(incomingClientMessage);
-  ws.send(
-    JSON.stringify({
-      type: 'create_game',
-      data: '',
-      id: 0,
-    }),
-  );
+export const createRoomsHandler = (): void => {
+  rooms.getRoom();
+  updateRooms();
 };
 
+export const addUserToRoomHandler = (
+  wsKey: string,
+  incomingClientMessage: IncomingClientMessage,
+): void => {
+  const data = JSON.parse(incomingClientMessage.data);
+  const user = users.getUserByCurrentSessionId(wsKey);
+  const roomId = data.indexRoom as string;
+  const room = rooms.getRoom(roomId);
+  if (user == null || room == null || room.roomUsers.find(u => u.index === user.index) != null)
+    return;
+  rooms.addUserToRoom(roomId, user.name, user.index);
+  updateRooms();
+};
 export const updateRooms = (): void => {
   wsClients.forEach(value => {
     const wsClient = value;
+    const roomsList = rooms.getRooms();
     wsClient.send(
       JSON.stringify({
         type: 'update_room',
-        data: JSON.stringify(rooms),
+        data: JSON.stringify(roomsList),
         id: 0,
       }),
     );
