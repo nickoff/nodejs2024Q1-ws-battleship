@@ -1,7 +1,13 @@
 import {Server, type WebSocket as WSWebSocket} from 'ws';
 import {type IncomingMessage} from 'http';
 import {wsClients} from '../store/ws-clients';
-import {regHandler, createRoomsHandler, addUserToRoomHandler, addShipsHandler} from '../controller';
+import {
+  regHandler,
+  createRoomsHandler,
+  addUserToRoomHandler,
+  addShipsHandler,
+  attackHandler,
+} from '../controller';
 import {type IncomingClientMessage} from '../shared/models';
 
 export const startWsServer = (): void => {
@@ -61,6 +67,10 @@ const incomingClientMessageHandler = (
     }
     case 'add_ships': {
       addShipsHandler(incomingClientMessage);
+      break;
+    }
+    case 'attack': {
+      attackHandler(incomingClientMessage);
       break;
     }
     default: {

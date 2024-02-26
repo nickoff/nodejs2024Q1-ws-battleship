@@ -1,6 +1,7 @@
 export interface GameModel {
   gameId: string | number;
   players: PlayerModel[];
+  currentPlayerIndex?: string | number;
 }
 
 export interface PlayerModel {

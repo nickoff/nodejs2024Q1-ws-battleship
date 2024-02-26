@@ -5,3 +5,10 @@ export interface addShipsData {
   ships: ShipModel[];
   indexPlayer: string | number;
 }
+
+export interface AttackData {
+  gameId: number | string;
+  x: number;
+  y: number;
+  indexPlayer: number | string;
+}

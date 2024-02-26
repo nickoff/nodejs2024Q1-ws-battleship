@@ -4,9 +4,9 @@ export const getShipPositions = (ship: ShipModel): Position[] => {
   const positions: Position[] = [];
   for (let i = 0; i < ship.length; i += 1) {
     if (ship.direction) {
-      positions.push({x: ship.position.x + i, y: ship.position.y});
-    } else {
       positions.push({x: ship.position.x, y: ship.position.y + i});
+    } else {
+      positions.push({x: ship.position.x + i, y: ship.position.y});
     }
   }
   return positions;
