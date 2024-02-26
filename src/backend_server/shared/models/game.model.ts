@@ -12,7 +12,7 @@ export interface PlayerModel {
 export interface ShipStatus {
   id: string;
   positions: Position[];
-  status: 'alive' | 'dead';
+  status: 'alive' | 'killed';
 }
 
 export interface Position {

@@ -8,7 +8,6 @@ import {
   addShipsHandler,
   attackHandler,
   finishGame,
-  updateWinners,
 } from '../controller';
 import {type IncomingClientMessage} from '../shared/models';
 import {users} from '../store/users';
@@ -52,7 +51,6 @@ const onConnection = (ws: WSWebSocket, req: IncomingMessage): void => {
       )?.playerId;
       if (playerStayInGameId != null) {
         finishGame(playerStayInGameId);
-        updateWinners();
       }
       wsClients.delete(wsKey);
     }

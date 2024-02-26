@@ -4,6 +4,7 @@ import {getResponseMessage} from '../shared/utils/response-message';
 import {users} from '../store/users';
 import {type Position, type IncomingClientMessage, type AttackData} from '../shared/models';
 import {winners} from '../store/winners';
+import {updateWinners} from './winners-handler';
 
 export const gameTurn = (gameId: string | number, indexPlayer: string | number): void => {
   const game = games.getGames().find(item => item.gameId === gameId);
@@ -63,8 +64,11 @@ export const attackHandler = (incomingClientMessage: IncomingClientMessage): voi
     gameAttackResult(game.gameId, playerId, positionAtack, 'miss');
     gameTurn(game.gameId, enemyPlayer.playerId);
   } else {
-    gameAttackResult(game.gameId, playerId, positionAtack, 'shot');
-    gameTurn(game.gameId, playerId);
+    const status = games.updateGameStatus(game, enemyPlayer.playerId, positionAtack);
+    if (status != null) {
+      gameAttackResult(game.gameId, playerId, positionAtack, status);
+      gameTurn(game.gameId, playerId);
+    }
   }
 };
 
@@ -79,5 +83,6 @@ export const finishGame = (winnerId: string | number): void => {
       winners.addWinner(winnerUser.name);
     }
     wsClient.send(getResponseMessage('finish', responseData));
+    updateWinners();
   });
 };

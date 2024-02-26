@@ -1,4 +1,4 @@
-import {type WinnerModel} from 'backend_server/shared/models';
+import {type WinnerModel} from '../shared/models';
 
 export class Winners {
   private readonly winners: WinnerModel[] = [];
