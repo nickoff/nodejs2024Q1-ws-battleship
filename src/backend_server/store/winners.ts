@@ -6,8 +6,16 @@ export class Winners {
     return this.winners;
   };
 
-  public addWinner = (winner: WinnerModel): void => {
-    this.winners.push(winner);
+  public addWinner = (userName: string): void => {
+    const winner = this.winners.find(w => w.name === userName);
+    if (winner != null) {
+      winner.wins += 1;
+    } else {
+      this.winners.push({
+        name: userName,
+        wins: 1,
+      });
+    }
   };
 }
 

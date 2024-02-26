@@ -7,8 +7,12 @@ import {
   addUserToRoomHandler,
   addShipsHandler,
   attackHandler,
+  finishGame,
+  updateWinners,
 } from '../controller';
 import {type IncomingClientMessage} from '../shared/models';
+import {users} from '../store/users';
+import {games} from '../store/games';
 
 export const startWsServer = (): void => {
   const wsServer = new Server({port: 3000});
@@ -39,6 +43,17 @@ const onConnection = (ws: WSWebSocket, req: IncomingMessage): void => {
 
   ws.on('close', (): void => {
     if (wsKey != null && wsClients.has(wsKey)) {
+      const exitUser = users.getUserByCurrentSessionId(wsKey);
+      const getGamesWithExitUser = games
+        .getGames()
+        .find(game => game.players.find(player => player.playerId === exitUser?.index) != null);
+      const playerStayInGameId = getGamesWithExitUser?.players.find(
+        player => player.playerId !== exitUser?.index,
+      )?.playerId;
+      if (playerStayInGameId != null) {
+        finishGame(playerStayInGameId);
+        updateWinners();
+      }
       wsClients.delete(wsKey);
     }
     console.log(`Client with key ${wsKey} disconnected!`);
