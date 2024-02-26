@@ -3,6 +3,7 @@ import {games} from '../store/games';
 import {type PlayerModel, type addShipsData, type IncomingClientMessage} from '../shared/models';
 import {getResponseMessage} from '../shared/utils/response-message';
 import {users} from '../store/users';
+import {gameTurn} from './game';
 
 export const addShipsHandler = (incomingClientMessage: IncomingClientMessage): void => {
   const data = JSON.parse(incomingClientMessage.data);
@@ -15,7 +16,10 @@ export const addShipsHandler = (incomingClientMessage: IncomingClientMessage): v
   games.addPlayerToGame(gameId, player);
   const game = games.getGames().find(item => item.gameId === gameId);
   if (game != null && game.players.length === 2) {
+    const startGamePlayer = game.players[Math.round(Math.random())];
+    if (startGamePlayer == null) return;
     startGame(gameId);
+    gameTurn(gameId, startGamePlayer.playerId);
   }
 };
 
