@@ -2,6 +2,7 @@ import {type IncomingClientMessage, type RoomUser} from '../shared/models';
 import {wsClients} from '../store/ws-clients';
 import {rooms} from '../store/rooms';
 import {users} from '../store/users';
+import {getResponseMessage} from '../shared/utils/response-message';
 
 export const createRoomsHandler = (): void => {
   rooms.getRoom();
@@ -30,13 +31,8 @@ export const updateRooms = (): void => {
   wsClients.forEach(value => {
     const wsClient = value;
     const roomsList = rooms.getRooms();
-    wsClient.send(
-      JSON.stringify({
-        type: 'update_room',
-        data: JSON.stringify(roomsList),
-        id: 0,
-      }),
-    );
+    const responseData = JSON.stringify(roomsList);
+    wsClient.send(getResponseMessage('update_room', responseData));
   });
 };
 
@@ -47,15 +43,10 @@ export const createGame = (roomUserList: RoomUser[]): void => {
     if (key == null || roomUsers.find(u => u.currentSessionId === key) == null) return;
     const wsClient = value;
     const roomUser = roomUsers.find(u => u.currentSessionId === key);
-    wsClient.send(
-      JSON.stringify({
-        type: 'create_game',
-        data: JSON.stringify({
-          idGame,
-          idPlayer: roomUser?.index,
-        }),
-        id: 0,
-      }),
-    );
+    const responseData = JSON.stringify({
+      idGame,
+      idPlayer: roomUser?.index,
+    });
+    wsClient.send(getResponseMessage('create_game', responseData));
   });
 };
