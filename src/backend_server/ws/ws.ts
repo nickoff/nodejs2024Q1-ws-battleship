@@ -50,7 +50,7 @@ const incomingClientMessageHandler = (
   wsKey: string,
   incomingClientMessage: IncomingClientMessage,
 ): void => {
-  console.log(incomingClientMessage);
+  console.log(incomingClientMessage.type);
 
   switch (incomingClientMessage.type) {
     case 'reg': {
@@ -70,6 +70,10 @@ const incomingClientMessageHandler = (
       break;
     }
     case 'attack': {
+      attackHandler(incomingClientMessage);
+      break;
+    }
+    case 'randomAttack': {
       attackHandler(incomingClientMessage);
       break;
     }

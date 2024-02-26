@@ -8,7 +8,7 @@ export interface addShipsData {
 
 export interface AttackData {
   gameId: number | string;
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   indexPlayer: number | string;
 }

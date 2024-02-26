@@ -45,7 +45,12 @@ export const gameAttackResult = (
 export const attackHandler = (incomingClientMessage: IncomingClientMessage): void => {
   const data: AttackData = JSON.parse(incomingClientMessage.data);
   const playerId = data.indexPlayer;
-  const positionAtack: Position = {x: data.x, y: data.y};
+  let positionAtack: Position;
+  if (data.x == null || data.y == null) {
+    positionAtack = {x: Math.floor(Math.random() * 10), y: Math.floor(Math.random() * 10)};
+  } else {
+    positionAtack = {x: data.x, y: data.y};
+  }
   const game = games.getGames().find(item => item.gameId === data.gameId);
   if (game == null || game.currentPlayerIndex !== playerId) return;
   const enemyPlayer = game.players.find(item => item.playerId !== playerId);
