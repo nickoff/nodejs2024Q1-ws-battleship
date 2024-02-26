@@ -40,7 +40,6 @@ const getPlayerWithStatus = (ships: ShipModel[], player: PlayerModel): PlayerMod
     ...player,
     shipsStatus,
   };
-  console.log(JSON.stringify(playerWithStatus.shipsStatus));
   return playerWithStatus;
 };
 
