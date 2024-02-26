@@ -1,4 +1,5 @@
-import {type PlayerModel, type GameModel} from '../shared/models';
+import {getShipStatus} from '../shared/utils/status-ship';
+import {type PlayerModel, type GameModel, type ShipModel, type ShipStatus} from '../shared/models';
 
 export class Games {
   private games: GameModel[] = [];
@@ -9,14 +10,16 @@ export class Games {
 
   public addPlayerToGame = (gameId: string | number, player: PlayerModel): void => {
     if (this.games.find(game => game.gameId === gameId) == null) {
+      const playerWithStatus = getPlayerWithStatus(player.ships, player);
       this.games.push({
         gameId,
-        players: [player],
+        players: [playerWithStatus],
       });
     } else {
       const game = this.games.find(item => item.gameId === gameId);
       if (game != null) {
-        game.players.push(player);
+        const playerWithStatus = getPlayerWithStatus(player.ships, player);
+        game.players.push(playerWithStatus);
       }
     }
   };
@@ -27,5 +30,18 @@ export class Games {
     }
   };
 }
+
+const getPlayerWithStatus = (ships: ShipModel[], player: PlayerModel): PlayerModel => {
+  const shipsStatus: ShipStatus[] = [];
+  ships.forEach((ship, index) => {
+    shipsStatus.push(getShipStatus(ship, index));
+  });
+  const playerWithStatus = {
+    ...player,
+    shipsStatus,
+  };
+  console.log(JSON.stringify(playerWithStatus.shipsStatus));
+  return playerWithStatus;
+};
 
 export const games = new Games();
